@@ -6,20 +6,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 
 public final class BackupTool extends JavaPlugin {
 
     private FileConfiguration messagesConfig;
     private File messagesFile;
-    private Timer backupTimer;
+    private BukkitTask backupTask;
 
     @Override
     public void onEnable() {
@@ -32,8 +31,8 @@ public final class BackupTool extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (backupTimer != null) {
-            backupTimer.cancel();
+        if (backupTask != null) {
+            backupTask.cancel();
         }
         getLogger().info("BackupTool disabled!");
     }
@@ -62,35 +61,37 @@ public final class BackupTool extends JavaPlugin {
     }
 
     private void scheduleBackupTask() {
-        int interval = getConfig().getInt("backup.interval", 30);
-        long intervalMillis = interval * 60 * 1000;
-
-        backupTimer = new Timer();
-        backupTimer.schedule(new TimerTask() {
+        int interval = getConfig().getInt("backup.interval", 30) * 60 * 20; // Convert to ticks (20 ticks per second)
+        backupTask = new BukkitRunnable() {
             @Override
             public void run() {
                 if (!Bukkit.getOnlinePlayers().isEmpty()) {
                     executeBackup(Bukkit.getConsoleSender());
                 }
             }
-        }, intervalMillis, intervalMillis);
+        }.runTaskTimerAsynchronously(this, interval, interval);
     }
 
     private void executeBackup(CommandSender sender) {
         String scriptPath = getConfig().getString("backup.script");
-        try {
-            sender.sendMessage(getMessage("backup_start"));
-            Process process = Runtime.getRuntime().exec(scriptPath);
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                sender.sendMessage(getMessage("backup_complete"));
-            } else {
-                sender.sendMessage(getMessage("backup_error"));
+        sender.sendMessage(getMessage("backup_start"));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    Process process = Runtime.getRuntime().exec(scriptPath);
+                    int exitCode = process.waitFor();
+                    if (exitCode == 0) {
+                        sender.sendMessage(getMessage("backup_complete"));
+                    } else {
+                        sender.sendMessage(getMessage("backup_error"));
+                    }
+                } catch (IOException | InterruptedException e) {
+                    getLogger().log(Level.SEVERE, "Backup script execution failed", e);
+                    sender.sendMessage(getMessage("backup_error"));
+                }
             }
-        } catch (IOException | InterruptedException e) {
-            getLogger().log(Level.SEVERE, "Backup script execution failed", e);
-            sender.sendMessage(getMessage("backup_error"));
-        }
+        }.runTaskAsynchronously(this);
     }
 
     private void createMessagesFile() {
@@ -108,8 +109,8 @@ public final class BackupTool extends JavaPlugin {
     private void reloadConfigurations() {
         reloadConfig();
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
-        if (backupTimer != null) {
-            backupTimer.cancel();
+        if (backupTask != null) {
+            backupTask.cancel();
         }
         scheduleBackupTask();
     }
