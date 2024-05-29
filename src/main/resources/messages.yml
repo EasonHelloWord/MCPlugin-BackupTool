@@ -11,3 +11,5 @@ messages:
   version_command_description: "Shows the plugin version."
   help_command_description: "Shows this help message."
   usage_command: "&cUsage: /backuptool <backup|reload|version|help>"
+  auto_backup_started: "&e[BackupTool] Automatic backup started..."
+  auto_backup_complete: "&a[BackupTool] Automatic backup completed."

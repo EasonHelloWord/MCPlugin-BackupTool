@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -94,7 +95,9 @@ public final class BackupTool extends JavaPlugin implements TabCompleter {
             @Override
             public void run() {
                 if (!Bukkit.getOnlinePlayers().isEmpty()) {
+                    Bukkit.broadcastMessage(getMessage("auto_backup_started"));
                     executeBackup(Bukkit.getConsoleSender());
+                    Bukkit.broadcastMessage(getMessage("auto_backup_complete"));
                 }
             }
         }.runTaskTimerAsynchronously(this, interval, interval);
