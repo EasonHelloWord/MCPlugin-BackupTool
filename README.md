@@ -1,5 +1,7 @@
 # BackupTool Plugin
 
+[中文版](README-ZH.md)
+
 BackupTool is a Bukkit plugin designed for performing periodic backups on a Minecraft server. It can automatically execute backups based on settings in the configuration file when players are online, and provides commands for administrators to manually trigger backups.
 
 ## Features

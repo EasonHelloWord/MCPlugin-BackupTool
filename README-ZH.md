@@ -1,5 +1,7 @@
 # BackupTool 插件
 
+[English Version](README.md)
+
 BackupTool 是一个 Bukkit 插件，用于在 Minecraft 服务器上执行定期备份。它可以根据配置文件中的设置，在有玩家在线时自动执行备份，并提供了命令供管理员手动触发备份。
 
 ## 功能
