@@ -1,0 +1,23 @@
+name: BackupTool
+version: '${project.version}'
+main: top.easonjan.backuptool.BackupTool
+api-version: '1.20'
+authors: [EasonJan]
+description: 更灵活的服务器自动备份工具
+
+commands:
+  backup:
+    description: Triggers a backup.
+    usage: /<command>
+    permission: backuptool.backup
+  backuptool:
+    description: BackupTool commands.
+    usage: /<command> <subcommand>
+    permission: backuptool.admin
+permissions:
+  backuptool.backup:
+    description: Allows the player to trigger a backup.
+    default: true
+  backuptool.admin:
+    description: Allows the player to use admin commands for BackupTool.
+    default: op

@@ -1,0 +1,3 @@
+backup:
+  interval: 30 # Interval in minutes
+  script: "/path/to/your/backup/script.sh"

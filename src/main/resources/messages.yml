@@ -1,0 +1,5 @@
+messages:
+  backup_start: "&e[BackupTool] Starting backup..."
+  backup_complete: "&a[BackupTool] Backup complete!"
+  backup_error: "&c[BackupTool] Backup failed!"
+  reload_complete: "&a[BackupTool] Configuration reloaded!"
